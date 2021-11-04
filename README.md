@@ -12,9 +12,13 @@ http://mvnrepository.com/ // maven 모음
 
 ## 스크립트
 부트스트랩
+```html
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet"> 
+```
 <br>
 
 Vue
+```html
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+```
 

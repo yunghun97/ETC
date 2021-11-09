@@ -18,7 +18,14 @@ http://mvnrepository.com/ // maven 모음
 <br>
 
 Vue
+https://vuejs.org/
+https://github.com/axios/axios
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!--axios-->
 ```
 
+## API 테스트 사이트  
+<br>
+https://jsonplaceholder.typicode.com/

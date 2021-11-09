@@ -24,8 +24,13 @@ https://github.com/axios/axios
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!--axios-->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script> <!--router-->
+<!--Router 사용법 https://router.vuejs.org/kr/guide/#javascript -->
 ```
 
 ## API 테스트 사이트  
 <br>
 https://jsonplaceholder.typicode.com/
+
+## LocalTunnel
+https://localtunnel.github.io/www/

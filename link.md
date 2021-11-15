@@ -52,11 +52,21 @@ https://codepen.io/
 https://vuex.vuejs.org/kr/ 
 ```html
 npm i vuex --save <!--Vuex-->
-<!--main.js-->
+<!--store/index.js-->
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
+<!--main.js-->
+import store from "./store";
 
+Vue.config.productionTip = false;
+
+new Vue({
+  router,
+  store,
+  render: (h) => h(App),
+}).$mount("#app");
+<
 ```
 <br>
 

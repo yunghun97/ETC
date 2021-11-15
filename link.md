@@ -26,6 +26,7 @@ https://github.com/axios/axios
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!--axios-->
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script> <!--router-->
 <!--Router 사용법 https://router.vuejs.org/kr/guide/#javascript -->
+
 ```
 
 ## API 테스트 사이트  
@@ -42,4 +43,16 @@ https://www.npmjs.com/
 Command에서 써드파티 모듈을 설치하고 관리하는 툴
 
 ## 다른사람 소스 구경
-https://codepen.io/
+https://codepen.io/  
+
+## VueCli환경
+https://vuex.vuejs.org/kr/ 
+```html
+npm i vuex --save <!--Vuex-->
+<!--main.js-->
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+```
+

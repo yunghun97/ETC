@@ -45,7 +45,10 @@ Command에서 써드파티 모듈을 설치하고 관리하는 툴
 ## 다른사람 소스 구경
 https://codepen.io/  
 
-## VueCli환경
+## VueCli 환경
+<br>
+
+## Vuex
 https://vuex.vuejs.org/kr/ 
 ```html
 npm i vuex --save <!--Vuex-->
@@ -55,4 +58,17 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 ```
+<br>
+
+## Vuetify
+https://vuetifyjs.com/en/
+```html
+vue add vuetify 
+
+<!--main.js-->
+import vuetify from "./plugins/vuetify";
+
+```
+
+
 

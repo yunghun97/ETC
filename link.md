@@ -70,6 +70,13 @@ new Vue({
 ```
 <br>
 
+##  BootStrap Vuex
+```
+npm install vue bootstrap bootstrap-vue
+```
+https://bootstrap-vue.org/
+<br>
+
 ## Vuetify
 https://vuetifyjs.com/en/
 ```html

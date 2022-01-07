@@ -24,6 +24,7 @@ END
 
 ## DB AUTO_INCREMENT 값 1부터 N까지 변경 
 <br>
+
 ```mysql
 ALTER TABLE [테이블명] AUTO_INCREMENT=1;
 SET @COUNT = 0;

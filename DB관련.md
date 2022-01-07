@@ -17,7 +17,7 @@ BEGIN
 	INSERT INTO User(id,password,email,phone,Auth)
     VALUES(PARAM_ID, PARAM_PASSWORD, PARAM_EMAIL, PARAM_PHONE, PARAM_AUTH);
   SELECT count(id)
-  INTO total //매개변수 total에 count값이 복사된다.
+  INTO total # 매개변수 total에 count값이 복사된다.
   from User
 END
 ```

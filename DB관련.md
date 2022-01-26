@@ -30,10 +30,10 @@ ALTER TABLE [테이블명] AUTO_INCREMENT=1;
 SET @COUNT = 0;
 UPDATE [테이블명] SET [AUTO_INCREMENT 적용된 컬럼] = @COUNT:=@COUNT+1;
 
-<!--
+/**
 사용 예시
 ALTER TABLE class_board AUTO_INCREMENT=1;
 SET @COUNT = 0;
 UPDATE class_board SET id = @COUNT:=@COUNT+1;
--->
+*/
 ```

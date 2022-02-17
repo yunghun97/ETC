@@ -45,3 +45,4 @@ compileQuerydsl.doFirst {
 	if(file(querydslDir).exists() ) delete(file(querydslDir)) 
 }
 ```
+3. 다시 build 하면 해결! 😀

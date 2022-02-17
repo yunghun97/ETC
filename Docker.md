@@ -1,7 +1,7 @@
 # 도커 개발 기록
-[SpringBoot 도커로 만들기](#SpringBoot-도커로-만들기)
-[도커 이미지 허브에 업로드하기](#-도커-이미지-허브에-업로드하기)
-[도커 Volume 생성 및 마운트 하기](#도커-Volume-생성-및-마운트-하기)
+[1. SpringBoot 도커로 만들기](#SpringBoot-도커로-만들기)  
+[2. 도커 이미지 허브에 업로드하기](#도커-이미지-허브에-업로드하기)  
+[3. 도커 Volume 생성 및 마운트 하기](#도커-Volume-생성-및-마운트-하기)  
 
 🏀
 ## SpringBoot 도커로 만들기
@@ -57,7 +57,7 @@ docker run --name {원하는 컨테이너 이름} -d -p 9999:9999 {이미지 이
 ```bash
 docker tag yunghun97/test yunghun97/honeyschool_be:v1
 
-## docker tage {이미지이름} {이미지이름:원하는태그이름}
+## docker tage {이미지이름} {이미지이름:설정한태그이름}
 ```
 2. 업로드하기
 ```bash

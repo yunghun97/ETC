@@ -37,7 +37,7 @@
 AWS 환경 : Ubuntu 20.04
 
 [1. Docker 설치](#1.-Docker-설치)  
-[2. Docker-Compose 설치](#2.-Docker-Compose-설치)  
+[2. Docker-Compose 설치](#Docker-Compose-설치)  
 [3. DB 설치](#3.-DB-설치)  
 [4. OpenVidu 설치](#4.-OpenVidu-설치)  
 [5. Nginx 설치](#5.-Nginx-설치)  
@@ -55,7 +55,7 @@ sudo service docker start
 shdo chmod 666 /var/run/docker.sock
 ```
   
-## 2. Docker-Compose-설치
+## Docker-Compose-설치
 1. docker-compose 최신 버전 설치
 ```bash
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose

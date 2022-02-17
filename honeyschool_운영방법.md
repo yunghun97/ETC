@@ -36,14 +36,14 @@
 도메인 주소 예시 : i6b201.p.ssafy.io  
 AWS 환경 : Ubuntu 20.04
 
-[1. Docker 설치](#1.-Docker-설치)  
+[1. Docker 설치](#Docker-설치)  
 [2. Docker-Compose 설치](#Docker-Compose-설치)  
-[3. DB 설치](#3.-DB-설치)  
-[4. OpenVidu 설치](#4.-OpenVidu-설치)  
-[5. Nginx 설치](#5.-Nginx-설치)  
-[6. FrontEnd 설정](#6.-FrontEnd-설정)  
-[7. BackEnd 설정](#7.-BackEnd-설정)
-## 1. Docker 설치
+[3. DB 설치](#DB-설치)  
+[4. OpenVidu 설치](#OpenVidu-설치)  
+[5. Nginx 설치](#Nginx-설치)  
+[6. FrontEnd 설정](#FrontEnd-설정)  
+[7. BackEnd 설정](#BackEnd-설정)
+## Docker 설치
 ```bash
 # 패키지 업데이트
 sudo apt-get update
@@ -71,7 +71,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose version
 ```
 
-## 3. DB 설치
+## DB 설치
 1.  
 ```bash
 docker pull mariadb
@@ -358,7 +358,7 @@ const OPENVIDU_SERVER_URL = "https://i6b201.p.ssafy.io:5443";
 const OPENVIDU_SERVER_SECRET = "ssafy";
 ```
   
-## 5. Nginx 설치
+## Nginx 설치
 1. Nginx 설치하기
 ```bash
 apt get install nginx
@@ -373,7 +373,7 @@ cd /etc/nginx/sites-enabled
 service nginx start
 ```
   
-## 6. FrontEnd 설정
+## FrontEnd 설정
 1. 소스 다운 받기
 ```bash
 git clone -b develop https://lab.ssafy.com/s06-webmobile1-sub2/S06P12B201.git
@@ -391,7 +391,7 @@ cp -r /home/ubuntu/honeyschool/S06P12B201/frontend/dist .
 ```
 3. 도메인 접속해서 작동 유무 확인
 
-## 7. BackEnd 설정
+## BackEnd 설정
 1. 6단계에서 소스 다운 받았다고 가정 및 Openvidu 설치 시 사용한 p12키를 사용하여 SSL 구동합니다.
 ```bash
 # 백엔드 소스 안에 진입 & 현재 

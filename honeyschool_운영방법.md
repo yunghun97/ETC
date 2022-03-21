@@ -52,7 +52,7 @@ sudo apt-get install docker.io -y
 # docker 서비스 실행
 sudo service docker start
 # 권한 부여
-shdo chmod 666 /var/run/docker.sock
+sudo chmod 666 /var/run/docker.sock
 ```
   
 ## Docker-Compose-설치

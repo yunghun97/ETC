@@ -1,5 +1,7 @@
-# SPRING 개발 기록
+# 👶 SPRING 개발 기록
 
+## 👨‍🎓 Spring Property 정보
+> https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
 ## SpringBoot 에 HTTPS 적용하기 SSL 사용  
 
 1. ### Certbot에서 인증서 생성  

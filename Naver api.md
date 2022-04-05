@@ -13,7 +13,7 @@
 
 ### 로그인 페이지 div 추가
 ```html
-<div id="naver_id_login" class="pt-1 mb-4" @click="naverLogin"></div>
+<div id="naver_id_login" @click="naverLogin"></div>
 ```
 ### 로그인 페이지 javascript
 ```javascript

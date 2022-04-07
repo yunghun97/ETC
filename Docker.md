@@ -2,6 +2,7 @@
 [1. SpringBoot 도커로 만들기](#SpringBoot-도커로-만들기)  
 [2. 도커 이미지 허브에 업로드하기](#도커-이미지-허브에-업로드하기)  
 [3. 도커 Volume 생성 및 마운트 하기](#도커-Volume-생성-및-마운트-하기)  
+[4. 도커 이미지 <none> 한번에 삭제하기](도커-이미지-<none>-한번에-삭제하기)
 
 🏀
 ## SpringBoot 도커로 만들기
@@ -120,3 +121,12 @@ ls
 😀 끝  
 
 ---
+  
+## 도커 이미지 <none> 한번에 삭제하기
+```bash
+# 1번 방법
+docker rmi $(docker images -f "dangling=true" -q)
+
+# 2번 방법
+docker image prune # -a를 붙이면 사용하지 않는 이미지를 전체 삭제합니다.
+```

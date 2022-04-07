@@ -30,6 +30,13 @@
     - AWS
     - Docker
 
+## 포트 정보 ⚙
+> Backend : 9999
+> Mariadb : 3307
+> Redis : 3308
+> Jenkins : 9090, 50000
+> Hadoop : 8088
+
 
 ## 구동시키기 위해 필요한 것들 👩‍🏫
 1. AWS DOCKER 설치
@@ -38,8 +45,9 @@
 4. Java 11 설치
 5. nginx 설치
 6. MariaDB Docker로 설치
-7. Jenkins 설치
-8. Hadoop 에코시스템 구축
+7. Redis 설치
+8. Jenkins 설치
+9. Hadoop 에코시스템 구축
 
 ## 운영메뉴얼 🎉
 ### 개발 환경
@@ -49,12 +57,13 @@ AWS 환경 : Ubuntu 20.04 LTS
 [1. Docker 설치](#Docker-설치)  
 [2. Docker-Compose 설치](#Docker-Compose-설치)  
 [3. Certbot 설정](#Certbot-설정)  
-[4. DB 설치](#DB-설치)  
-[5. Nginx 설정](#Nginx-설정)  
-[6. 배포 자동화 하기](#Jenkins-배포)  
-[7. Hadoop 설치](#Hadoop-설치)  
-[8. Sqoop 설치](#Sqoop-설치)  
-[9. Oozie 설치](#Oozie-설치)  
+[4. DB 설치](#DB-설치)
+[5. Redis 설치](#Redis-설치)
+[6. Nginx 설정](#Nginx-설정)  
+[7. 배포 자동화 하기](#Jenkins-배포)  
+[8. Hadoop 설치](#Hadoop-설치)  
+[9. Sqoop 설치](#Sqoop-설치)  
+[10. Oozie 설치](#Oozie-설치)  
 ## Docker 설치
 ```bash
 # 패키지 업데이트
@@ -159,6 +168,31 @@ grant all privileges on *.* to 'username'@'%';
 flush privileges;
 ```
 ---
+  
+## 👕
+## Redis 설치
+
+1. docker pull redis
+```bash
+docker pull redis 
+```
+2. 이미지 확인
+``` 
+docker images
+```
+3. 도커로 만들기
+```bash
+sudo docker run -d -p 6380:6379 --name 이름 redis --requirepass 비번
+
+# volume 마운트
+# docker run -v {불륨이름or경로}:{마운트할 컨테이너 내부 경로} -d -p 3308:6379 --name {컨테이너 이름} redis --requirepass {비번}
+docker run -v redisData:/data -d -p 3308:6379 --name redis redis --requirepass ssafy
+```
+4. 접속 테스트
+```bash
+docker exec -it 컨테이너아이디 redis-cli 
+```
+
 ## 🎇  
 ## Certbot 설정
 ### https 설정을 위한 Certbot 설정  

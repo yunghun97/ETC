@@ -1,5 +1,15 @@
 # 🚐 Jenkins로 배포 자동화하기!
 
+## 0. Credentials 설정
+> Dashboard > Credentials > (global 클릭) > System > Global credentials > Add Credentials
+  
+![image](https://user-images.githubusercontent.com/71022555/162360781-53e682cc-83de-45d6-9c26-e4e73e9f080d.png)
+  
+- UserName : Gitlab ID 작성
+- Password : GitLab Password 작성
+- ID : Credentials을 구분하기 위한 unique한 id 값
+- Description : 해당 Credentials 설명 작성
+
 
 ## 1. Git 연동
 > Git Plugin 설치

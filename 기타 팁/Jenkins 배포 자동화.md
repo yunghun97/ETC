@@ -13,7 +13,8 @@
 
 ## 1. Git 연동
 > Git Plugin 설치
-
+> Gitlab Hook Plugin
+> GitLab Plugin
 ## 2. Node.js 설치
 > Jenkins 관리 -> Global Tool Configuration > Node.JS 탭 작성
 
@@ -52,7 +53,7 @@ docker run --name tnt -d -p 9999:9999 yunghun97/tnt
 ## Docker file 소스
 
 #FROM openjdk:11
-#ARG JAR_FILE=./build/libs/TNT_hadoop-0.0.1-SNAPSHOT
+#ARG JAR_FILE=./build/libs/TNT_hadoop-0.0.1-SNAPSHOT.jar
 #copy ${JAR_FILE} tnt.jar
 #ENTRYPOINT ["java", "-jar", "tnt.jar"]
 #EXPOSE 9990

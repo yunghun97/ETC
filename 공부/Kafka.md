@@ -59,6 +59,24 @@ kafka는 운영 및 관리 편의성, 안정적인 운영을 위한 모니터링
 ### 주피커 의존성에서 해방(v3.0)
   
 ---
+## Kafka 구성 주요 요소
+> **주키퍼(ZooKeeper)** : 아파치 프로젝트 애플리케이션 이름입니다. 카프카의 메타데이터 관리 및 브로커의 정상상태 점검 담당  
+
+> **카프카(Kafka) OR 카프카 클러스터(Kafka Cluster)** 아파치 프로젝트 애플리케이션 이름입니다. 여러 대의 브로커로 구성한 클러스터를 의미합니다.  
+
+> **브로커(Broker)** : 카프카 애플리케이션이 설치된 서버 또는 노드  
+
+> **프로듀서(Producer)** : 카프카로 메시지를 보내는 역할을 하는 클라이언트를 총칭  
+
+> **컨슈머(Comsumer)** : 카프카로 메시지를 꺼내가는 역할을 하는 클라이언트를 총칭합니다.  
+
+> **토픽(Topic)** : 카프카는 메시지 피드들을 토피긍로 구분하고, 각 토픽의 이름은 카프카 내에서 고유합니다.  
+
+> **파티션(Partition)** 하나의 토픽이 한 번에 처리할 수 있는 한계를 높이기 위해 토픽 하나를 여러 개로 나눠 병렬처리가 가능하게 만들 것을 파티션이라고 합니다.  
+적절한 파티션 개수 참고 사이트 : [컨플루언트](https://eventsizer.io)  
+
+> **세그먼트** 프로듀서 Producer로 전송한 메시지는 각각의 파티션에 저장되어 있다. 각 메시지들은 세그먼트 라는 로그 파일의 형태로 브로커의 로컬디스크에 저장됩니다.  
+개념 : Partition[세그먼트0, 세그먼트1, 세그먼트2]
 # 프로듀서
 프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 담당합니다.
 ### 프로듀서 디자인
@@ -90,33 +108,38 @@ kafka는 운영 및 관리 편의성, 안정적인 운영을 위한 모니터링
 |transactional.id|'정확히 한 번 전송'을 위해 사용하는 옵션이며, 동일한 TransactionalId에 한해 정확히 한 번을 보장합니다. 옵션을 사용하기 전 enable.idempotence를 true로 설정해야 합니다.|
 
 ### Producer 메시지 보내고 확인하지 않기 예제
-```java
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
+```java        
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.util.Arrays;
 import java.util.Properties;
 
-public class ProducerFireForgot {
+public class ConsumerAuto {
     public static void main(String[] args) {
         Properties props = new Properties(); //Properties 오브젝트를 시작합니다.
-        props.put("bootstrap.servers", "도메인 OR Public IP:9092,도메인 OR Public IP:9092,도메인 OR Public IP:9092"); //브로커 리스트를 정의합니다.
-        props.put("key.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer"); //메시지 키와 벨류에 문자열을 지정하므로 내장된 StringSerializer를 지정합니다.
-        props.put("value.serializer",
-                "org.apache.kafka.common.serialization.StringSerializer");
-
-        Producer<String, String> producer = new KafkaProducer<>(props); //Properties 오브젝트를 전달해 새 프로듀서를 생성합니다.
+        props.put("bootstrap.servers", "도메인 OR Public IP:9091,도메인 OR Public IP:9092,도메인 OR Public IP:9093"); //브로커 리스트를 정의합니다.
+        props.put("group.id", "peter-consumer01"); //컨슈머 그룹 아이디 정의합니다.
+        props.put("enable.auto.commit", "true"); //자동 커밋을 사용합니다.
+        props.put("auto.offset.reset", "latest"); //컨슈머 오프셋을 찾지 못하는 경우 latest로 초기화 합니다. 가장 최근부터 메시지를 가져오게 됩니다.
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); //문자열을 사용했으므로 StringDeserializer 지정합니다.
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props); //Properties 오브젝트를 전달하여 새 컨슈머를 생성합니다.
+        consumer.subscribe(Arrays.asList("peter-basic01","chat-test")); //구독할 토픽을 지정합니다.
 
         try {
-            for (int i = 0; i < 3; i++) {
-                ProducerRecord<String, String> record = new ProducerRecord<>("peter-basic01", "Apache Kafka is a distributed streaming platform - " + i); //ProducerRecord 오브젝트를 생성합니다.
-                producer.send(record); //send()메소드를 사용하여 메시지를 전송 후 Java Future Ojbect로 RecordMetadata를 리턴 받지만, 리턴값을 무시하므로 메시지가 성공적으로 전송되었는지 알 수 없습니다.
+            while (true) { //무한 루프 시작입니다. 메시지를 가져오기 위해 카프카에 지속적으로 poll()을 하게 됩니다.
+                ConsumerRecords<String, String> records = consumer.poll(1000); //컨슈머는 폴링하는 것을 계속 유지하며, 타임 아웃 주기를 설정합니다.해당 시간만큼 블럭합니다.
+                for (ConsumerRecord<String, String> record : records) { //poll()은 레코드 전체를 리턴하고, 하나의 메시지만 가져오는 것이 아니므로, 반복문 처리합니다.
+                    System.out.printf("Topic: %s, Partition: %s, Offset: %d, Key: %s, Value: %s\n",
+                            record.topic(), record.partition(), record.offset(), record.key(), record.value());
+                }
             }
         } catch (Exception e){
-            e.printStackTrace(); //카프카 브로커에게 메시지를 전송한 후의 에러는 무시하지만, 전송 전 에러가 발생하면 예외를 처리할 수 있습니다.
+            e.printStackTrace();
         } finally {
-            producer.close(); // 프로듀서 종료
+            consumer.close(); //컨슈머를 종료합니다.
         }
     }
 }
@@ -129,7 +152,8 @@ dependency>
 </dependency>
 */
 ```
-동작 과정
+
+### 동작 과정
 1. Properties 객체 생성
 2. 브로커 리스트 정의
 3. 메시지 Key, Value는 문자열 타입이므로 Kafka의 기본 StringSerializer를 지정
@@ -138,6 +162,112 @@ dependency>
 6. send() 메소드를 사용해 메시지를 전송한 후 get() 메소드를 통해 Kafka의 응답을 기다립니다. -> 자바 Future 객체로 RecordMetadata를 리턴받지만, 리턴 값을 무시하므로 전송 성공 여부는 알 수 없다.
 7. Kafka 브로커에게 메시지를 전송한 후의 에러는 무시자히만, 전송 전에 에러가 발생하면 예외를 처리할 수 있음
 8. Producer 종료
+
+# 컨슈머(Consumer)
+### Kafka의 토픽에 저장되어 있는 메시지를 가져오는 역할을 담당합니다. 
+### 단순하게 메시지를 가져오는 것 같지만 내부적으로 Consumer 그룹, 리밴런싱 등 여러 동작을 수행합니다.
+
+## 컨슈머의 기본 동작
+1. Producer가 Consumer Topic으로 메시지를 전송하면 해당 메시지들을 브로커들의 로컬 디스크에 저장됩니다. 그리고 우리는 컨슈머를 이용해 Topic에 저장된 메시지를 가져올 수 있습니다.
+2. Consumer 그룹은 하나 이상의 Consumer들이 모여있는 그룹을 의미하고 Consumer는 반드시 컨슈머 그롭에 속하게 됩니다.
+3. 그리고 이 Consumer 그룹은 각 Partition의 리더에게 Kafka Topic에 저장된 메시지를 가져오기 위한 요청을 보냅니다.
+4. 이때 Partition의 수와 Consumer 수(하나의 컨슈메 그룹 안에 있는 컨슈머 슈)는 1:1로 매핑되는 것이 이상적
+    - Consumer 수가 Partition 수보다 더 많다고 해서 더 빠르게 Topic 메시지를 빠르게 가져오거나 처리량이 높아지는 것이 아니라 더 많은 Consumer가 대기 상태로 존재
+    - 간혹 액티브/스탠바이 개념으로 추가 Consumer가 더 있으면 좋을 것이라 생각이 가능하지만 Consumer 그룹내에세 리밸런싱 동작을 통해 장애가 발생한 Consumer의 역할을 동일한 그룹에 있는 다른 Consumer가 그 역할을 대신 수행하므로 장애 대비를 위한 추가 Consumer 리소스를 할당하지 않아도 됩니다.
+## 컨슈머의 주요 옵션
+다양한 옵션을 제공한다 Consumer를 어떻게 처리하고 다루느냐에 따라 Consumer 동작에서 메시지의 중복, 유실 등 여러 가지 상황이 발생할 수 있습니다. Consumer의 사용 목적이 최대한 안정적이며 지연이 없도록 Kafka로부터 메시지를 가져오는 것인데 이를 위한 옵션을 잘 이해하고 사용해야 원하는 형태로 동작할 것입니다. Consumer는 옵션에 따라 오토 커밋, 배치 등을 설정할 있다.
+|컨슈머 옵션|설명|
+|:---|:---|
+|bootstrap.servers|Producer와 동일하게 브로커의 정보를 입력합니다.|
+|fetch.min.bytes|한 번에 가져올 수 있는 최소 데이터 크기입니다. 만약 지정한 크기보다 작은 경우, 요청에 응답하지 않고 데이터가 누적될 때까지 대기합니다.|
+|group.id|Consumer가 속한 Consumer 그룹을 식별하는 식별자 입니다. 동일한 그룹내의 Consumer 정보는 모두 공유됩니다.|
+|heartbeat.interval.ms|하트비트가 있다는 것은 Consumer의 상태가 active임을 의미합니다. session.timeout.ms와 밀접한 관계가 있으며, session.timeout.ms보다 낮은 값으로 설장해야 합니다. 일반적으로 session.timeout.ms의 1/3으로 설정합니다.|
+|max.partition.fetch.bytes|Partition당 가져올 수 있는 최대 크기를 의미합니다.|
+|session.time.out.ms|이 시간을 이용해, Consumer가 종료된 것인지를 판단합니다. Consumer는 주기적으로 하트비트를 보내야 하고, 만약 이 시간 전까지 하트비트를 보내지 않았다면 해당 Consumer는 종료된 것으로 간주하고 Consumer 그룹에서 제외하고 리밸런싱을 시작합니다.|
+|enable.auto.commit|백그라운드로 주기적으로 오프셋을 커밋합니다.|
+|auto.offset.reset|Kafka에서 초기 오프셋이 없거나 현재 오프셋이 더 이상 존재하지 않는 경우 다음 옵션으로  reset합니다. earliest : 가장 초기의 오프셋 값으로 설정 latest : 가장 마지막의 오프셋 값으로 설정 none: 이전 오프셋값을 찾지 못하면 에러를 나타냅니다.|
+|fetch.max.bytes|한 번의 가죠오기 요청으로 가져올 수 있는 최대 크기입니다.|
+|group.instance.id|Consumer의 고유한 식별자입니다. 만약 설정한다면 static멤버로 간주되어, 불필요한 리밸런싱을 하지 않습니다.|
+|isolation.level|트랜잭션 Consumer에서 사용되는 옵션으로, read_uncommitted는 기본값으로 모든 메시지를 읽고, read_committed는 틀내잭션이 완료된 메시지만 읽습니다.|
+|max.poll.records|한 번의 poll() 요청으로 가져오는 최대 메시지 수|
+|partition.assignment.strategy|Partition 할당 전략이며, 기본값을 range입니다.|
+|fetch.max.wait.ms|fetch.min.bytes에 의해 설정된 데이터보다 적은 경우 요청에 대한 응답을 기다리는 최대 시간입니다.|
+
+### 오토커밋 예제
+```java
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+
+import java.util.Arrays;
+import java.util.Properties;
+
+public class ConsumerAuto {
+    public static void main(String[] args) {
+        Properties props = new Properties(); //Properties 오브젝트를 시작합니다.
+//        props.put("bootstrap.servers", "peter-kafka01.foo.bar:9092,peter-kafka02.foo.bar:9092,peter-kafka03.foo.bar:9092"); //브로커 리스트를 정의합니다.
+        props.put("bootstrap.servers", "k6b102.p.ssafy.io:9091,k6b102.p.ssafy.io:9092,k6b102.p.ssafy.io:9093"); //브로커 리스트를 정의합니다.
+        props.put("group.id", "peter-consumer01"); //컨슈머 그룹 아이디 정의합니다.
+        props.put("enable.auto.commit", "true"); //자동 커밋을 사용합니다.
+        props.put("auto.offset.reset", "latest"); //컨슈머 오프셋을 찾지 못하는 경우 latest로 초기화 합니다. 가장 최근부터 메시지를 가져오게 됩니다.
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer"); //문자열을 사용했으므로 StringDeserializer 지정합니다.
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props); //Properties 오브젝트를 전달하여 새 컨슈머를 생성합니다.
+        consumer.subscribe(Arrays.asList("peter-basic01","chat-test")); //구독할 토픽을 지정합니다.
+
+        try {
+            while (true) { //무한 루프 시작입니다. 메시지를 가져오기 위해 카프카에 지속적으로 poll()을 하게 됩니다.
+                ConsumerRecords<String, String> records = consumer.poll(1000); //컨슈머는 폴링하는 것을 계속 유지하며, 타임 아웃 주기를 설정합니다.해당 시간만큼 블럭합니다.
+                for (ConsumerRecord<String, String> record : records) { //poll()은 레코드 전체를 리턴하고, 하나의 메시지만 가져오는 것이 아니므로, 반복문 처리합니다.
+                    System.out.printf("Topic: %s, Partition: %s, Offset: %d, Key: %s, Value: %s\n",
+                            record.topic(), record.partition(), record.offset(), record.key(), record.value());
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            consumer.close(); //컨슈머를 종료합니다.
+        }
+    }
+}
+```
+> 오프셋(offset) consumer에서 메시지를 어디까지 읽었는지 저장하는 값
+
+
+## Kafka 리플리케이션(Replication)
+Kafka는 무수히 많은 데이터 파이프라인의 정중앙에 위치하는 메인 허브 역할을 합니다. 이렇게 중앙에서 메인 허브 역할을 하는 Kafka Cluster가 만약 하드웨어 문제나 점검 등으로 인해 정상적으로 동작하지 못하거나, Kafka와 연결된 전체 데이터 파이프라인에 영향을 미친다면 심각한 이슈가 된다. 이를 Kafka는 초기 설계 단계부터 안정적인 서비스가 운영 될 수 있도록 구상되었다. 이때 안정성을 확보하기 위해 Kafka 내부에서는 **리플리케이션(Replication)**이라는 동작을 하게 됩니다.
+
+### Replication 동작 개요
+topic 생성 시 replication factor라는 옵션을 설정해야 합니다.
+- zookeeper에 연걸
+```bash
+kafka-topics --zookeeper zk1:2181 --create --topic chat-test --partitions 3 --replication-factor 3
+#  kafka-topics --zookeeper {주키퍼host이름 }:{주키퍼포트번호} --create --topic {토픽이름}--partitions 3 --replication-factor 3
+```
+- kafka broker에 생성
+```bash
+kafka-topics --bootstrap-server kafka1:9091 --topic --create --topic chat-test --partitions 3 --replication-factor 3
+#  kafka-topics --zookeeper {카프카host이름 }:{카프카포트번호} --create --topic {토픽이름}--partitions 3 --replication-factor 3
+```
+- Topic 상세 보기
+```bash
+kafka-topics --bootstrap-server kafka1:9091 --topic chat-test --describe
+# kafka-topics --bootstrap-server {카프카host이름 }:{카프카포트번호} --topic {토픽이름} --describe
+```
+
+- 로그 보기
+```bash
+# /var/lib/kafka/data/ OR /data 위치
+# cd {topic이름}{0,1,2 파티션번호} ex) cd chat-test-0
+kafka-dump-log --print-data-log --files 00000000000000000000.log # 0 20개
+```
+
+### 결과
+kafka2, 3 브로커에도 동일한 메시지를 갖고 있는걸 확인 할 수 있다. 이렇게 replication-factor 옵션을 통해 N개의 리플리케이션이 있는 경우 N - 1 까지 브로커 장애가 발생해도 메시지 ㅅ노실 없이 안정적으로 메시지를 주고 받을 수 있습니다.
+
+## 리더와 팔로워
+#### 토픽 상세 보기 명령어 실행시 출력 내용 중 Partition의 리더(Leader)라는 부분이 있습니다. 모두 동일한 리플리케이션이라 하더라도 리더만의 역할이 따로 있기 때문에 Kafka는 리더를 특별히 강조해 표시합니다. 카프카는 내부적으로 모두 동일한 리플리케이션들을 리더와 팔로워로 구분하고 각자의 역할을 분담시킨다. 리더는 리플리케이션 중 하나가 선정되며, 모든 읽기와 쓰기는 그 리더를 통해서만 가능합니다. 즉 Producer는 모든 Replication에 메시지를 보내는 것이 아니라 리더에게만 메시지를 전송하며 Consumer또한 Reader로 부터 메시지를 가져옵니다.  
+#### 팔로워들 역시 대기만 하는 것이 아니라 리더가 문제가 발생하거나 이슈가 있을 경우 언제든지 새로운 리더가 될 준비를 해야합니다. 따라서 Consumer가 Topic의 메시지를 꺼내 가는 것과 비슷한 동작으로 지속적으로 Partition의 리더 가 새로운 메시지를 받았는지 확인하고 새로운 메시지가 있다면 해당 메시지를 리더로부터 복제합니다.
 
 
 --- 

@@ -246,7 +246,7 @@ kafka-topics --zookeeper zk1:2181 --create --topic chat-test --partitions 3 --re
 ```
 - kafka broker에 생성
 ```bash
-kafka-topics --bootstrap-server kafka1:9091 --topic --create --topic chat-test --partitions 3 --replication-factor 3
+kafka-topics --bootstrap-server kafka1:9091 --create --topic chat-test --partitions 3 --replication-factor 3
 #  kafka-topics --zookeeper {카프카host이름 }:{카프카포트번호} --create --topic {토픽이름}--partitions 3 --replication-factor 3
 ```
 - Topic 상세 보기

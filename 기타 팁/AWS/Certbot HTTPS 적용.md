@@ -20,6 +20,12 @@ sudo certbot --nginx -d {발급받을 도메인}
 # 이메일 입력
 # 서비스 약관 동의
 # 1. No redirect, Redirect 설정
+
+# '/snap/bin' is not included in the PATH enviroment variable 에러 발생시
+# 임시 해결
+export PATH=$PATH:/snap/bin
+# 지속 해결
+# /etc/environment 들어가서 /snap/bin 리스트에 넣기
 ```
   
 ### SSL 자동 갱신

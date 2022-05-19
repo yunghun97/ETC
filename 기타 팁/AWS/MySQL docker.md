@@ -9,7 +9,10 @@ docker pull mysql
 ```bash
 docker run --name 컨테이너이름 -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=비번 이미지이름
 
-# docker run -v mariadb_volume:/var/lib/mysql --name mariadb -d -p 3307:3307 -e MYSQL_ROOT_PASSWORD=ssafy mariadb
+# 기본
+# docker run --name mysql -d -p 3307:3307 -e MYSQL_ROOT_PASSWORD=ssafy mysql
+## 불륨 설정
+# docker run -v mysql_volume:/var/lib/mysql --name mysql -d -p 3307:3307 -e MYSQL_ROOT_PASSWORD=ssafy mysql
 
 # -v {불륨이름}:마운트할주소 --name 컨테이너이름 -d -p {접속하는포트}:{포워딩되는포트} -e ~~
 - -d : 컨테이너를 백그라운드로 실행

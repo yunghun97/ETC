@@ -30,10 +30,59 @@
 - LineTokenizer가 한 줄을 여러 필드로 나눴으므로, 이제 각 입력 필드를 도메인 객체의 필드로 매핑할 수 있다.
 - Spring JDBC에서 RowMapper가 ResultSet의 로우(row)를 도메인 객체로 매핑하는 것과 흡사하다.
 
+```java
+@Component
+@RequiredArgsConstructor
+public class CsvReader {
+
+    @Value("${csv.file.path}")
+    private String fileLink;
+    public FlatFileItemReader<BanNumberDto> csvFileItemReader() {
+        FlatFileItemReader<BanNumberDto> flatFileItemReader = new FlatFileItemReader<>();
+        flatFileItemReader.setResource(new FileSystemResource(fileLink));
+        flatFileItemReader.setLinesToSkip(1); // header skip
+        flatFileItemReader.setEncoding("UTF-8");
+
+        DefaultLineMapper<BanNumberDto> defaultLineMapper = new DefaultLineMapper<>();
+        /* delimitedLineTokenizer : setNames를 통해 각각의 데이터의 이름 설정 */
+
+        DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer(",");
+        delimitedLineTokenizer.setNames("kind", "number", "use");
+        defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
+        
+        /* beanWrapperFieldSetMapper : Tokenizer에서 가지고온 데이터들을 VO로 바인드하는 역할 */
+        BeanWrapperFieldSetMapper<BanNumberDto> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        beanWrapperFieldSetMapper.setTargetType(BanNumberDto.class);
+
+        defaultLineMapper.setFieldSetMapper(beanWrapperFieldSetMapper);
+
+        // LineMapper 지정
+        flatFileItemReader.setLineMapper(defaultLineMapper);
+
+        return flatFileItemReader;
+    }
+}
+```
 
 
 ## 📜 파일 출력
 
+```java
+@Component
+@RequiredArgsConstructor
+public class CsvWriter implements ItemWriter<BanNumberDto> {
+    private final BanNumberRepository banNumberRepository;
+
+    private final BanNumberMapper banNumberMapper;
+    @Override
+    @Transactional
+    public void write(List<? extends BanNumberDto> items){
+        for(BanNumberDto item : items){
+            banNumberRepository.save(banNumberMapper.toBanNumber(item));
+        }
+    }
+}
+```
 
 
 #### 참고자료

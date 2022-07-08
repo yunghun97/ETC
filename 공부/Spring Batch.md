@@ -84,6 +84,59 @@ public class CsvWriter implements ItemWriter<BanNumberDto> {
 }
 ```
 
+## 🍟 에러 처리
+```java
+@Bean
+public Step csvFileItemReaderStep() {
+    return stepBuilderFactory.get("csvFileItemReaderStep")
+            .<BanNumberDto, BanNumber>chunk(CHUNK_SIZE)
+            .reader(csvReader.csvFileItemReader())
+            .processor(csvConvert)
+            .writer(csvWriter)
+            .listener(new CsvErrorListener()) // 에러 핸들러
+            .build();
+}
+
+// 1. Annotation 사용해서 에러 핸들링
+@Slf4j
+public class CsvErrorListener {
+    @OnReadError
+    public void onReaderError(Exception e){
+        if(e instanceof FlatFileParseException) {
+            FlatFileParseException ffpe = (FlatFileParseException) e;
+
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.append("An error occured while processing the " +
+                    ffpe.getLineNumber() +
+                    " line of the file.  Below was the faulty " +
+                    "input.\n");
+            errorMessage.append(ffpe.getInput() + "\n");
+            log.error(errorMessage.toString(), ffpe);
+        } else {
+            log.error("An error occured in ##csvReader##", e);
+        }
+    }
+
+    @OnProcessError
+    public void onProcessError(BanNumberDto banNumberDto, Exception e){
+        log.error("An error occured in ##csvProcess##", e);
+    }
+
+    @OnWriteError
+    public void onWriteError(Exception e, List<? extends BanNumber> items){
+        log.error("An error occured in ##csvWriter##", e);
+    }
+}
+// 2. implements를 사용해서 핸들링 가능
+
+public class ErrorHandler implements ItemWriteListener{
+    // ItemReaderListner 등을 상속받아서 @Override해서 처리 가능
+    @Override
+    void onWriteError(java.lang.Exception exception,java.util.List<? extends S> items){
+        // 에러 처리
+    }
+}
+```
 
 #### 참고자료
 ##### 스프링배치 완벽 가이드(에이콘 출판)

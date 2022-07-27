@@ -16,14 +16,57 @@
 
 - Job은 배치처리 과정을 하나의 단위로 만들어 놓은 객체입니다. 여러 Step 인스턴스를 포함하는 컨테이너, 배치처리 과정에 있어 전체 계층 최상단에 위치하고 있습니다. 
 
+### JobInstance 
+- Job의 실행의 단위
+- Job을 실행시키게 되면 하나의 JobInstance가 생성됩니다.
+- 1월 1일에 실행한 JobInstance가 실패하여 다시 실행 시키더라고 1월 1일에 대한 데이터만 처리함
+  
+### JobParameters
+- JobInstance를 JobParameters 객체로 구분하게 됩니다.
+- String, Double, Long, Date 4가지 형식만을 지원하고 있습니다.
+  
+### JobExecution
+- JobInstance 실행에 시도에 대한 객체
+- JobInstance 실행마다 별도의 JobExecution이 생성된다.
+- JobExecution은 JobInstance 실행에 대한 상태, 시작시간, 종료시간, 생성시간 등의 정볼르 담고 있습니다.  
+  
+### JobRepository
+- 모든 배치 처리 정보를 담고있는 매커니즘입니다.
+- Job이 실행되게 되면 JobRepository에 JobExecution과 StepExecution을 생성하게 되며 JobRepository에서 Execution 정보들을 저장하고 조회하며 사용하게 됩니다.
+  
 ## 🌭 Step
 
 - Step은 Job의 배치처리를 정의하고 순차적인 단계를 캡슐화 합니다. Job은 최소한 1개 이상의 Step을 가져야 하며 Job의 실제 일괄 처리를 제어하는 모든 정보가 들어있습니다.
+
+### StepExecution
+- JobExecution과 동일하게 Step 실행 시도에 대한 객체를 나타냅니다.
+- 이전 단계의 Step  이 실패하게 되면 다음 단계가 실행되지 않으므로 에러 이후의 StepExceution은 생성되지 않습니다.
+- 실제 시작이 될때만 생성됩니다.
+- JobExecution에 저장되는 정보 외에 read 수, write 수, commit 수, skip 수 등의 정보들도 저장이 됩니다.
   
-  
+### ExecutionContext
+- Job에서 데이터를 공유할 수 있는 데이터 저장소입니다.
+- ExecutionContext는 JobExecutionContext, StepExecutionContext 2가지 종류가 있으나 이 두가지는 지정되는 범위가 다릅니다. 
+- JobExecutionContext의 경우 Commit 시점에 저장
+- StepExecutionContext는 실행 사이에 저장이 되게 됩니다.
+- ExecutionContext를 통해 Step간 Data 공유가 가능하며 Job 실패시 ExecutionContext를 통한 마지막 실행 값을 재구성 할 수 있습니다.
+
 ![image](https://user-images.githubusercontent.com/71022555/179394027-029bd0ed-735f-47f3-b1f5-113e913812e9.png)  
   
+## 🧂 Item
 
+### ItemReader
+- Step에서 Item을 읽어오는 인터페이스입니다. ItemReader에 대한 다양한 인터페이스가 존재하며 다양한 방법으로 Item을 읽어 올 수 있습니다.  
+
+### ItemProcessor
+- ItemReader에서 읽어온 Item(데이터)를 처리하는 역할
+- Reader, Writer는 필수지만 Processor는 필수가 아니다.
+  
+### ItemWriter
+- 처리된 Data를 Writer 할 때 사용한다.
+
+![image](https://user-images.githubusercontent.com/71022555/181202071-e4f8c371-69a7-4a0a-b38d-751f7ef73800.png)  
+  
 
 ## 📃 파일 입력
 
@@ -162,6 +205,34 @@ public class ErrorHandler implements ItemWriteListener{
     }
 }
 ```
+
+## 다중 스레드 스텝
+```java
+@Bean
+public Step csvFileItemRedisStep(){ // Redis에 파일 결과 저장
+    return stepBuilderFactory.get("csvFileItemRedisStep")
+            .<BanNumberDto,BanNumberRedis>chunk(CHUNK_SIZE)
+            .reader(csvReader.csvFileItemReader())
+            .processor(csvRedisConvert)
+            .writer(csvRedisWriter)
+            .listener(new CsvErrorListener())
+            .taskExecutor(new SimpleAsyncTaskExecutor()) // 다중 스레딩 기능을 추가하는데 필요한 TaskExecutor 구현체 정의
+            .build();
+}
+// .taskExecutor 다중 스레딩 기능을 추가하는데 필요한 TaskExecutor 구현체 
+// new SimpleAsyncTaskExecutor() 스텝 내에서 실행되는 각 청크용으로 새 스레드를 생성해 각 청크를 병렬로 실행한다.
+```
+- 다중 스레드 환경에서 여러 스레드가 접근 가능한 상태를 가진 객체(동기화가 돼 있지 않는 등)에는 서로 다른 스레드의 상태로 덮어쓰게 되는 문제가 발생할 수 있다.
+- taskexecutor로 성능을 개선시킬 수 있지만 입력 메커니즘이 네트워크, 디스크 버스 등과 같은 자원을 모두 소모하고 있다면 성능이 나아지지 않는다.
+
+## 병렬 스텝
+> 추가 예정
+  
+## 파티셔닝
+> 추가 예정
+
+## 원격청킹
+> 추가 예정
 
 #### 참고자료
 ##### 스프링배치 완벽 가이드(에이콘 출판)

@@ -5,7 +5,7 @@
 [1. Pod](#pod)  
 [2. Service](#service)  
 [3. Volume](#volume)  
-[4. ConfigMap, Secret](#configmap,-secret)  
+[4. ConfigMap, Secret](#configmap-secret)  
 [5. Namespace, ResourceQuota, LimitRange](namespace,-resourcequota,-limitrange)  
   
 ## Pod
@@ -223,7 +223,7 @@ spec:
 
 ![image](https://user-images.githubusercontent.com/71022555/168121170-e68eeb9d-bb78-4af7-b958-25fdd517f43d.png)
 
-## ConfigMap, Secret
+## ConfigMap Secret
 - A 서비스가 일반 접근과 보안 접근을 둘 다 허용하는 상황에서
     - 개발 환경에서는 보안 접근해제
     - 배포 환경에서는 보안 접근설정

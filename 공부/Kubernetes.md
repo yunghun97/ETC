@@ -1,12 +1,13 @@
 # 😀 Kubernetes
 
 ## 🧐 목차
-
-[1. Pod](#Pod)
-[2. Service](#Service)
-[3. Volume](#Volume)
-[4. ConfigMap, Secret](#ConfigMap,-Secret)
-[5. Namespace, ResourceQuota, LimitRange](Namespace,-ResourceQuota,-LimitRange)
+  
+[1. Pod](#pod)  
+[2. Service](#service)  
+[3. Volume](#volume)  
+[4. ConfigMap, Secret](#configmap,-secret)  
+[5. Namespace, ResourceQuota, LimitRange](namespace,-resourcequota,-limitrange)  
+  
 ## Pod
 ### Container
 - 하나의 독립적인 서비스를 구동할 수 있는 컨테이너가 여러개 있다.

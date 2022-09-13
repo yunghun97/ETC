@@ -6,7 +6,7 @@
 [2. Service](#service)  
 [3. Volume](#volume)  
 [4. ConfigMap, Secret](#configmap-secret)  
-[5. Namespace, ResourceQuota, LimitRange](namespace,-resourcequota,-limitrange)  
+[5. Namespace, ResourceQuota, LimitRange](namespace-resourcequota-limitrange)  
   
 ## Pod
 ### Container
@@ -249,7 +249,7 @@ Pw : Base64 # Base64인코딩 후 저장해야 한다. -> Pod에서는 디코딩
 - File을 Mount 한다.
 ![image](https://user-images.githubusercontent.com/71022555/168123696-bb379063-431c-44e1-bb4f-095f74153f3c.png)
 
-## Namespace, ResourceQuota, LimitRange
+## Namespace ResourceQuota LimitRange
 - Pod의 크기를 제한해서 Pod의 사용량이 NameSpace설정 보다 높으면 접근 X
 - Cluter에도 달아서 전체 자원 제한 가능
 ![image](https://user-images.githubusercontent.com/71022555/168124175-a41c809a-71a7-4d81-aea3-ed1908476653.png)

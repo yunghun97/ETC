@@ -21,17 +21,30 @@ docker run --name 컨테이너이름 -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=비�
 - mariadb : 다운로드 받은 이미지 이름  
 ```
 
-### 3. MySQL DOcker 컨테이너 접속
+### 3. MySQL Docker 컨테이너 접속
 ```bash
 docker exec -it mysql bash
 ```
 
-### 4. 시간 수정
+### 4. 시간 수정  
+
+- 시스템 파일 수정
 ```bash
 vim etc/mysql/my.cnf
 
 [mysqld]
 default-time-zone='+9:00'
+```
+  
+- 쿼리로 수정
+```sql
+SET GLOBAL time_zone='Asia/Seoul';
+set time_zone='Asia/Seoul';
+
+
+<!-- time zone 확인 -->
+select @@global.time_zone, @@session.time_zone;
+SELECT now();
 ```
 ### 5. 계정 추가
 mysql -u root -p  접속 후

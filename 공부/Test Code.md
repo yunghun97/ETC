@@ -9,7 +9,7 @@
 ## 🐥 Junit5
 
 - Junit Jupiter
-  - TestEngine API 구현체 - JUnit5를 구현
+  - TestEngine API 구현체 - Junit5를 구현
 - Junit Platform
   - test를 실행하기 위한 뼈대
   - 각종 IDE를 연동을 보조하는 역할
@@ -53,7 +53,7 @@ Command + Shift + T
 - @SpringBootTest는 기본적으로 @ExtendWith가 추가되어 있습니다.
 
 **@WebMvcTest(Class명.class)**
-- ()안에 작성도니 클래스만 실제 로드하여 테스트 진행
+- ()안에 작성된 클래스만 실제 로드하여 테스트 진행
 - 매개변수를 지정하지 않으면 @Controoler, @RestController, @RestControllerAdivce 등 컨트롤러와 연관된 Bean이 모드 로드
 - Spring의 모든 Bean을 로드가 필요없을 때 사용
 

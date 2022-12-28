@@ -76,3 +76,31 @@ Command + Shift + T
 - 필요한 Class들을 Configuration으로 만들어 사용할 수 있음
 - Configuration Component 클래스도 의존성 설정할 수 있음
 - Import된 클래스는 주입으로 사용 가능
+
+### Get, Post 테스트 코드
+```java
+    @Test
+    @DisplayName("카테고리 Insert")
+    void insertCategory() throws Exception {
+        Category category = new Category("key","테스트", 9, null);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/category/insert")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(category))
+                        )
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("특정 카테고리 가져오기")
+    void getCategory() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get("//api/category/select")
+                        .param("id", "category1")
+        ).andExpect(status().isOk())
+                .andDo(print());
+    }
+```

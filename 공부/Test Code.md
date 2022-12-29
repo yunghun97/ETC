@@ -104,3 +104,15 @@ Command + Shift + T
                 .andDo(print());
     }
 ```
+
+### 테스트 코드 실행 순서
+```java
+// 명시한 순서대로 진행
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // 
+class CategoryControllerTest {
+
+}
+
+@Order(n) // n이 작은거부터 실행
+```
+

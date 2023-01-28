@@ -116,6 +116,12 @@ use myNewDB
     - 기본적으로, **collection을 생성하는 동안 \_id field에 대해 unique 인덱스를 생성함**
     - \_id field는 array가 아닌 모든 BSON 데이터 형식의 값을 포함할 수 있음 (주의 : 복제 기능을 확실히 하려면, \_id field에 BSON 정규 표현식 유형의 값을 저장하지 말 것)
 
+## MongoDB 서버 실행 방법
+
+```bash
+mongod --auth --port 27017 -dbpath D:\data\db
+```
+
 ## 인증 방법
 
 ```bash
